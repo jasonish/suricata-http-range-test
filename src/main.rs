@@ -18,7 +18,7 @@ async fn main() {
 /// Download a complete file concurrently.
 async fn test_complete_file_concurrently() {
     println!("Running concurrent range download.");
-    let url = "http://codemonkey.net/range/10000.iso";
+    let url = "http://codemonkey.net/range/10000.txt";
     let ranges = &[
         "bytes=0-999",
         "bytes=1000-1999",
@@ -55,7 +55,7 @@ async fn test_complete_file_concurrently() {
 /// Download a complete file concurrently with duplicate requests to fake overlaps.
 async fn test_complete_file_concurrently_with_dupes() {
     println!("Running concurrent range download.");
-    let url = "http://codemonkey.net/range/10000.iso";
+    let url = "http://codemonkey.net/range/10000.txt";
     let ranges = &[
         "bytes=0-999",
         "bytes=1000-1999",
@@ -121,7 +121,7 @@ async fn test_complete_file_concurrently_with_dupes() {
 
 /// Download a complete file sequentially.
 async fn test_complete_file_in_sequence() {
-    let url = "http://codemonkey.net/range/10000.iso";
+    let url = "http://codemonkey.net/range/10000.txt";
     let ranges = &[
         "bytes=0-999",
         "bytes=1000-1999",
@@ -135,7 +135,7 @@ async fn test_complete_file_in_sequence() {
         "bytes=9000-9999",
     ];
     let client = reqwest::Client::new();
-
+    let mut total = 0;
     for range in ranges {
         let response = client
             .get(url)
@@ -144,6 +144,7 @@ async fn test_complete_file_in_sequence() {
             .await
             .unwrap();
         let body = response.bytes().await.unwrap();
-        dbg!(body.len());
+        total += body.len();
     }
+    println!("Read {} bytes", total);
 }
